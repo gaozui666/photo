@@ -115,15 +115,6 @@
             min-height: 32px;
         }
 
-        .auth-hint {
-            font-size: 0.7rem;
-            color: #8ba0bc;
-            margin-top: 16px;
-            background: #f1f5f9;
-            padding: 8px;
-            border-radius: 20px;
-        }
-
         /* 主内容区（初始隐藏） */
         .main-content {
             display: none;
@@ -597,7 +588,6 @@
             <input type="password" id="authKeyInput" placeholder="密钥" autocomplete="off">
             <button id="authBtn">验证访问</button>
             <div class="auth-error" id="authError"></div>
-            <div class="auth-hint" id="authHint">⏰ 实时密钥规则: zyc + 当前时间(HHMM)<br>例如 20:13 对应 zyc2013</div>
         </div>
     </div>
 
@@ -668,7 +658,6 @@
 
     <script>
         // ==================== 密钥验证模块 ====================
-        // 生成当前时间的动态密钥: zyc + HHMM (例如 20:13 -> zyc2013)
         function getCurrentDynamicKey() {
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
@@ -676,52 +665,18 @@
             return `zyc${hours}${minutes}`;
         }
 
-        // 验证密钥是否正确
         function validateKey(inputKey) {
-            const currentKey = getCurrentDynamicKey();
-            return inputKey === currentKey;
+            return inputKey === getCurrentDynamicKey();
         }
 
-        // 更新提示中的实时密钥示例
-        function updateAuthHint() {
-            const hintDiv = document.getElementById('authHint');
-            if (hintDiv) {
-                const now = new Date();
-                const hours = now.getHours().toString().padStart(2, '0');
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const exampleKey = `zyc${hours}${minutes}`;
-                hintDiv.innerHTML = `⏰ 实时密钥规则: zyc + 当前时间(HHMM)<br>当前密钥示例: <strong style="color:#f59e0b;">${exampleKey}</strong><br>（每分钟自动变化）`;
-            }
-        }
-
-        // 每分钟更新一次提示（如果验证框还在显示）
-        let hintInterval = null;
-        function startHintUpdater() {
-            if (hintInterval) clearInterval(hintInterval);
-            hintInterval = setInterval(() => {
-                // 只有在验证遮罩还存在时更新提示
-                const overlay = document.getElementById('authOverlay');
-                if (overlay && overlay.style.display !== 'none') {
-                    updateAuthHint();
-                } else {
-                    clearInterval(hintInterval);
-                    hintInterval = null;
-                }
-            }, 10000); // 每10秒更新一次提示显示
-        }
-
-        // 验证成功后的处理
         function onAuthSuccess() {
             const authOverlay = document.getElementById('authOverlay');
             const mainContent = document.getElementById('mainContent');
             if (authOverlay) authOverlay.style.display = 'none';
             if (mainContent) mainContent.style.display = 'block';
-            if (hintInterval) clearInterval(hintInterval);
-            // 验证成功后初始化图片加载器等
             initImageLoader();
         }
 
-        // 验证失败处理
         function onAuthFailed() {
             const errorDiv = document.getElementById('authError');
             if (errorDiv) {
@@ -730,16 +685,13 @@
                     if (errorDiv) errorDiv.textContent = '';
                 }, 2000);
             }
-            // 清空输入框
             const inputEl = document.getElementById('authKeyInput');
             if (inputEl) inputEl.value = '';
         }
 
-        // 绑定验证事件
         function bindAuthEvents() {
             const authBtn = document.getElementById('authBtn');
             const authInput = document.getElementById('authKeyInput');
-            
             const doAuth = () => {
                 const inputKey = authInput ? authInput.value.trim() : '';
                 if (validateKey(inputKey)) {
@@ -748,7 +700,6 @@
                     onAuthFailed();
                 }
             };
-            
             if (authBtn) authBtn.onclick = doAuth;
             if (authInput) {
                 authInput.onkeypress = (e) => {
@@ -757,9 +708,6 @@
             }
         }
 
-        // 初始化提示和事件
-        updateAuthHint();
-        startHintUpdater();
         bindAuthEvents();
 
         // ==================== 图片查看器核心模块 ====================
@@ -768,14 +716,12 @@
         let currentIndex = 0;
         let isInitialized = false;
 
-        // DOM 元素（等验证成功后再获取也可以，但提前定义全局变量）
         let totalSpan, statusText, seqInput, loadBtn, prevBtn, nextBtn, fullscreenBtn;
         let counter, copyBtn, imageArea, linkValue, previewContainer, progressArea, progressSlider, progressInfo;
 
         function initImageLoader() {
             if (isInitialized) return;
             
-            // 获取 DOM 元素
             totalSpan = document.getElementById('totalCount');
             statusText = document.getElementById('statusText');
             seqInput = document.getElementById('seqInput');
@@ -792,7 +738,6 @@
             progressSlider = document.getElementById('progressSlider');
             progressInfo = document.getElementById('progressInfo');
 
-            // 更新进度条UI
             function updateProgressBar() {
                 if (currentList.length === 0) {
                     if (progressArea) progressArea.style.display = 'none';
