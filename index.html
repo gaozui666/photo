@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>图片序号查看器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 主卡片 */
+        .card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* 头部 */
+        .header {
+            background: linear-gradient(120deg, #1e2b4f, #16213e);
+            padding: 28px 32px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1::before {
+            content: "🖼️";
+        }
+
+        .header p {
+            opacity: 0.8;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 60px;
+            padding: 8px 20px;
+        }
+
+        .total {
+            font-size: 0.85rem;
+        }
+
+        .total span {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: #ffd700;
+            color: #1e2b4f;
+            padding: 2px 12px;
+            border-radius: 40px;
+            margin-left: 8px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* 输入区 */
+        .input-section {
+            padding: 28px 32px;
+            background: #f8fafc;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #1e293b;
+            background: #eef2ff;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 150px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 48px;
+            outline: none;
+            font-weight: 500;
+        }
+
+        .input-group input:focus {
+            border-color: #667eea;
+        }
+
+        .input-group button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 48px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .input-group button:hover {
+            transform: scale(1.02);
+        }
+
+        .hint {
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: #5b6e8c;
+        }
+
+        /* 图片展示区 */
+        .display-section {
+            padding: 32px;
+        }
+
+        .preview {
+            background: #fefefe;
+            border-radius: 24px;
+            border: 1px solid #edf2f7;
+            overflow: hidden;
+        }
+
+        .preview-header {
+            background: #f1f5f9;
+            padding: 14px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .copy-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .image-area {
+            padding: 40px;
+            text-align: center;
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-area img {
+            max-width: 100%;
+            max-height: 450px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .placeholder {
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        .link-area {
+            padding: 16px 20px 24px;
+            border-top: 1px solid #f0f2f5;
+            background: #fafcff;
+        }
+
+        .link-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .link-value {
+            font-size: 0.75rem;
+            word-break: break-all;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 12px;
+            color: #2563eb;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 16px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            background: #f8fafc;
+            padding: 14px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h1>序号即所见</h1>
+            <p>输入数字编号，图片即刻呈现</p>
+            <div class="stats">
+                <div class="total">📸 图片总数 <span id="totalCount">--</span></div>
+                <div class="status"><span class="dot"></span><span id="statusText">加载中...</span></div>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label>🔢 序号</label>
+                <input type="number" id="seqInput" placeholder="输入 1、2、3..." min="1">
+                <button id="viewBtn">✨ 查看图片</button>
+            </div>
+            <div class="hint" id="hintText">正在从服务器获取图片列表...</div>
+        </div>
+
+        <div class="display-section">
+            <div class="preview">
+                <div class="preview-header">
+                    <span>📷 预览窗口</span>
+                    <button class="copy-btn" id="copyBtn" style="display: none;">📋 复制链接</button>
+                </div>
+                <div class="image-area" id="imageArea">
+                    <div class="placeholder">输入序号后图片将显示在这里</div>
+                </div>
+                <div class="link-area" id="linkArea" style="display: none;">
+                    <div class="link-label">🔗 图片地址</div>
+                    <div class="link-value" id="linkValue"></div>
+                </div>
+            </div>
+        </div>
+        <footer>⚡ 点击图片可查看原图</footer>
+    </div>
+</div>
+
+<script>
+    // API 配置
+    const API_URL = "https://api.yingsuyun.com/ysy/divide/h5/index";
+    const WORKS_ID = "66372370d625556ea3093a1b8d2b124c";
+    const USER_ID = "11373";
+    
+    let imageLinks = [];
+    let isLoading = false;
+
+    // DOM 元素
+    const totalSpan = document.getElementById('totalCount');
+    const statusText = document.getElementById('statusText');
+    const hintText = document.getElementById('hintText');
+    const seqInput = document.getElementById('seqInput');
+    const viewBtn = document.getElementById('viewBtn');
+    const imageArea = document.getElementById('imageArea');
+    const linkArea = document.getElementById('linkArea');
+    const linkValue = document.getElementById('linkValue');
+    const copyBtn = document.getElementById('copyBtn');
+
+    // 获取图片列表
+    async function fetchImages() {
+        if (isLoading) return;
+        isLoading = true;
+        statusText.innerHTML = '<span class="loading"></span> 请求中...';
+        
+        const timestamp = Date.now().toString();
+        const headers = {
+            "Content-Type": "application/json",
+            "Token": "marketingDiy",
+            "Timestamp": timestamp,
+            "Sign": "621d744d6ff3a02285d85bcf15622455",
+            "User-Agent": "Mozilla/5.0 (iPad; CPU OS 18_7 like Mac OS X) AppleWebKit/605.1.15",
+            "Referer": "http://divide.yingsuyun.com/",
+            "Origin": "http://divide.yingsuyun.com"
+        };
+        const payload = { worksId: WORKS_ID, userId: USER_ID };
+        
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload)
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            
+            // 解析数据
+            const folderList = data?.data?.folderList;
+            if (!folderList) throw new Error("数据结构异常");
+            
+            const links = [];
+            const seenMd5 = new Set();
+            
+            for (const folderName in folderList) {
+                const folderContent = folderList[folderName];
+                if (!Array.isArray(folderContent)) continue;
+                for (const picItem of folderContent) {
+                    if (!picItem.picList) continue;
+                    for (const picInfo of picItem.picList) {
+                        const md5 = picInfo.picMd5;
+                        const url = picInfo.picUrl;
+                        if (!md5 || !url) continue;
+                        if (seenMd5.has(md5)) continue;
+                        seenMd5.add(md5);
+                        links.push(url);
+                    }
+                }
+            }
+            
+            if (links.length === 0) throw new Error("未找到图片");
+            
+            imageLinks = links;
+            totalSpan.innerText = imageLinks.length;
+            hintText.innerHTML = `✅ 已加载 ${imageLinks.length} 张图片，请输入 1 ～ ${imageLinks.length} 之间的序号`;
+            statusText.innerHTML = `就绪 ${imageLinks.length}张`;
+            
+        } catch (err) {
+            console.error(err);
+            statusText.innerHTML = "加载失败";
+            hintText.innerHTML = "⚠️ 无法连接服务器，请检查网络或刷新重试";
+            imageArea.innerHTML = `<div class="error">❌ 获取图片失败<br><span style="font-size:0.75rem;">${err.message}</span><br><button onclick="location.reload()" style="margin-top:12px;padding:6px 20px;border-radius:30px;border:none;background:#667eea;color:white;">重新加载</button></div>`;
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    // 显示图片
+    function showImage(index) {
+        if (imageLinks.length === 0) {
+            imageArea.innerHTML = '<div class="placeholder">📭 图片列表为空，请稍后刷新</div>';
+            return;
+        }
+        
+        if (index < 1 || index > imageLinks.length) {
+            imageArea.innerHTML = `<div class="placeholder">❌ 序号超出范围 (1 ~ ${imageLinks.length})</div>`;
+            linkArea.style.display = "none";
+            copyBtn.style.display = "none";
+            return;
+        }
+        
+        const imgUrl = imageLinks[index - 1];
+        imageArea.innerHTML = `<img src="${imgUrl}" alt="Image ${index}" onerror="this.parentElement.innerHTML='<div class=\'placeholder\'>⚠️ 图片加载失败</div>'">`;
+        linkValue.innerText = imgUrl;
+        linkArea.style.display = "block";
+        copyBtn.style.display = "block";
+        
+        // 点击图片新窗口打开
+        const img = imageArea.querySelector('img');
+        if (img) {
+            img.addEventListener('click', () => window.open(imgUrl, '_blank'));
+        }
+    }
+
+    // 复制链接
+    copyBtn.addEventListener('click', async () => {
+        const link = linkValue.innerText;
+        if (!link) return;
+        try {
+            await navigator.clipboard.writeText(link);
+            const original = copyBtn.innerText;
+            copyBtn.innerText = "✓ 已复制";
+            setTimeout(() => { copyBtn.innerText = original; }, 1500);
+        } catch {
+            alert("复制失败，请手动复制:\n" + link);
+        }
+    });
+
+    // 查看按钮
+    viewBtn.addEventListener('click', () => {
+        const val = seqInput.value.trim();
+        if (!val) {
+            imageArea.innerHTML = '<div class="placeholder">📌 请输入序号</div>';
+            return;
+        }
+        const num = parseInt(val, 10);
+        if (isNaN(num)) {
+            imageArea.innerHTML = '<div class="placeholder">🔢 请输入有效数字</div>';
+            return;
+        }
+        showImage(num);
+    });
+
+    // 回车支持
+    seqInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') viewBtn.click();
+    });
+
+    // 启动
+    fetchImages();
+</script>
+</body>
+</html>
