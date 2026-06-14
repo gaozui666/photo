@@ -15,8 +15,9 @@
             min-height: 100vh;
             background: radial-gradient(circle at 30% 20%, #e9f0ff, #c8daf5);
             background-attachment: fixed;
-            font-family: -apple-system, "SF Pro Text", "SF Pro Display", "Inter", system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            font-family: -apple-system, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
             padding: 20px 18px;
+            transition: padding 0.2s;
         }
 
         .glass-container {
@@ -24,129 +25,146 @@
             margin: 0 auto;
         }
 
+        /* 正常模式卡片 */
         .glass-card {
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px);
             border-radius: 56px;
             border: 1px solid rgba(255, 255, 255, 0.65);
-            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2), inset 0 0.5px 0 rgba(255, 255, 255, 0.8);
             overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.3s;
         }
 
+        /* ----------------- 全屏模式 ----------------- */
+        body.fullscreen-mode {
+            padding: 0 !important;
+        }
+        body.fullscreen-mode .glass-container {
+            max-width: 100%;
+            margin: 0;
+        }
+        body.fullscreen-mode .glass-card {
+            border-radius: 0;
+            border: none;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        body.fullscreen-mode .glass-header,
+        body.fullscreen-mode .input-frost,
+        body.fullscreen-mode .privacy-note,
+        body.fullscreen-mode footer {
+            display: none;
+        }
+        body.fullscreen-mode .viewer-glass {
+            padding: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        body.fullscreen-mode .preview-panel {
+            border-radius: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        /* 工具栏固定在顶部 */
+        body.fullscreen-mode .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        body.fullscreen-mode .tool-btn,
+        body.fullscreen-mode .counter-glass {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        /* 进度条固定在底部 */
+        body.fullscreen-mode .progress-glass {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            display: block !important;
+        }
+        body.fullscreen-mode .image-stage {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            padding: 70px 20px 70px;
+        }
+        body.fullscreen-mode .image-stage img {
+            max-width: 100%;
+            max-height: calc(100vh - 140px);
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        body.fullscreen-mode .link-glass {
+            display: none;
+        }
+
+        /* ----------------- 普通样式 ----------------- */
         .glass-header {
             padding: 24px 30px 18px;
             background: rgba(255, 255, 255, 0.3);
             border-bottom: 1px solid rgba(255, 255, 255, 0.4);
         }
-
         .glass-header h1 {
             font-size: 1.8rem;
             font-weight: 590;
-            letter-spacing: -0.3px;
             background: linear-gradient(120deg, #1c2f4a, #0f1f35);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
         .glass-header h1::before {
             content: "🪞";
             font-size: 1.7rem;
             background: none;
-            -webkit-background-clip: unset;
             color: #2c456b;
         }
-
-        .glass-header p {
-            font-size: 0.85rem;
-            color: #1f3b5e;
-            font-weight: 480;
-            margin-top: 6px;
-            opacity: 0.8;
-        }
-
         .stats-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-top: 18px;
             background: rgba(255, 255, 255, 0.45);
             border-radius: 60px;
             padding: 6px 20px;
-            backdrop-filter: blur(4px);
         }
-
-        .total-badge {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #1e3a5f;
-        }
-
         .total-number {
             background: rgba(255, 255, 255, 0.7);
             padding: 2px 14px;
             border-radius: 40px;
             font-weight: 600;
             margin-left: 8px;
-            color: #0f2a48;
-            font-size: 1.25rem;
-            backdrop-filter: blur(4px);
         }
-
-        .status-light {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #1f4970;
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background: #2c9b6e;
-            border-radius: 50%;
-            box-shadow: 0 0 0 0 rgba(44, 155, 110, 0.6);
-            animation: pulse-subtle 2s infinite;
-        }
-
-        @keyframes pulse-subtle {
-            0% { transform: scale(0.95); opacity: 0.6; }
-            70% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.6; }
-        }
-
         .input-frost {
             padding: 22px 30px;
             background: rgba(255, 255, 255, 0.25);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
         }
-
         .input-flex {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             align-items: center;
         }
-
-        .input-label {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(8px);
-            padding: 8px 18px;
-            border-radius: 44px;
-            font-weight: 510;
-            color: #1e3a60;
-            font-size: 0.9rem;
-            border: 0.5px solid rgba(255,255,255,0.6);
-        }
-
         .glass-input {
             flex: 1;
             background: rgba(255, 255, 255, 0.7);
@@ -155,18 +173,29 @@
             padding: 12px 20px;
             border-radius: 48px;
             font-size: 0.95rem;
-            color: #0f2b44;
-            font-weight: 480;
             outline: none;
-            transition: all 0.2s;
+            color: #1e3a5f;
         }
-
-        .glass-input:focus {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(255,255,255,0.5);
+        /* 输入框提示文字半透明 + 呼吸动画 */
+        .glass-input::placeholder {
+            color: rgba(30, 58, 95, 0.4);
+            font-weight: 400;
+            transition: opacity 0.3s ease;
+            animation: placeholderPulse 2s infinite ease-in-out;
         }
-
+        /* 帮助文字也添加半透明呼吸效果 */
+        .helper-text {
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: rgba(30, 58, 95, 0.5);
+            letter-spacing: 0.2px;
+            animation: placeholderPulse 2s infinite ease-in-out;
+        }
+        @keyframes placeholderPulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.4; }
+        }
         .glass-button {
             background: rgba(30, 45, 70, 0.8);
             backdrop-filter: blur(8px);
@@ -175,142 +204,75 @@
             border-radius: 48px;
             color: white;
             font-weight: 590;
-            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            letter-spacing: 0.3px;
         }
-
-        .glass-button:hover {
-            background: rgba(20, 35, 55, 0.9);
-            transform: scale(0.98);
-        }
-
-        .helper-text {
-            margin-top: 12px;
-            font-size: 0.7rem;
-            color: #2a4a72;
-            opacity: 0.75;
-            letter-spacing: 0.2px;
-        }
-
         .viewer-glass {
             padding: 26px 30px 32px;
         }
-
         .preview-panel {
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(40px);
             border-radius: 48px;
             border: 1px solid rgba(255, 255, 255, 0.6);
             overflow: hidden;
-            box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.15);
         }
-
         .toolbar {
             background: rgba(255, 255, 255, 0.55);
             padding: 12px 24px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
             gap: 12px;
-            border-bottom: 0.5px solid rgba(255, 255, 255, 0.6);
         }
-
-        .tool-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
         .tool-btn {
             background: rgba(255, 255, 255, 0.7);
             border: 0.5px solid rgba(255,255,240,0.8);
             padding: 6px 16px;
             border-radius: 32px;
             font-size: 0.75rem;
-            font-weight: 510;
-            color: #1e3a5f;
             cursor: pointer;
-            transition: 0.15s;
-            backdrop-filter: blur(4px);
         }
-
-        .tool-btn:hover {
-            background: rgba(255, 255, 255, 0.95);
-            transform: scale(0.96);
-        }
-
         .counter-glass {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(8px);
             padding: 6px 16px;
             border-radius: 30px;
             font-size: 0.8rem;
-            font-weight: 500;
-            color: #1f4870;
         }
-
         .progress-glass {
             padding: 12px 24px;
             background: rgba(255, 255, 255, 0.3);
-            border-bottom: 0.5px solid rgba(255, 255, 255, 0.4);
         }
-
         .progress-row {
             display: flex;
             align-items: center;
             gap: 14px;
             flex-wrap: wrap;
         }
-
-        .progress-label {
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #2c5a83;
-            letter-spacing: 0.3px;
-        }
-
         .progress-slider-glass {
             flex: 1;
         }
-
         input[type="range"] {
             width: 100%;
             height: 5px;
             -webkit-appearance: none;
             background: rgba(255, 255, 255, 0.7);
             border-radius: 10px;
-            outline: none;
         }
-
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 18px;
             height: 18px;
             background: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0,0,0,0.1);
             cursor: pointer;
-            transition: 0.1s;
         }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            background: #f5f9ff;
-        }
-
         .progress-text {
             background: rgba(255, 255, 255, 0.5);
             padding: 4px 16px;
             border-radius: 28px;
             font-size: 0.7rem;
-            font-weight: 500;
-            color: #1f4a72;
         }
-
         .image-stage {
             padding: 36px 32px;
             text-align: center;
@@ -318,143 +280,45 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(250, 252, 255, 0.2);
         }
-
         .image-stage img {
             max-width: 100%;
             max-height: 520px;
             border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.25);
             cursor: pointer;
-            transition: 0.2s;
         }
-
-        .placeholder-frost {
-            color: #2f5680;
-            font-weight: 480;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.3);
-        }
-
         .link-glass {
             padding: 14px 24px 24px;
             border-top: 0.5px solid rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.2);
         }
-
-        .link-label {
-            font-size: 0.65rem;
-            font-weight: 500;
-            color: #32648c;
-            letter-spacing: 0.3px;
-        }
-
         .link-value-frost {
             background: rgba(255, 255, 255, 0.6);
             padding: 8px 14px;
             border-radius: 28px;
             font-size: 0.7rem;
             word-break: break-all;
-            font-family: monospace;
-            color: #1c5680;
             cursor: pointer;
-            transition: 0.1s;
-            margin-top: 6px;
         }
-
-        .link-value-frost:hover {
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        .privacy-note {
-            background: rgba(200, 220, 250, 0.5);
-            backdrop-filter: blur(16px);
-            padding: 10px 20px;
+        .privacy-note, footer {
+            background: rgba(200, 220, 250, 0.3);
+            padding: 8px 20px;
             font-size: 0.6rem;
             text-align: center;
-            color: #1f4c74;
-            border-top: 0.5px solid rgba(255,255,240,0.5);
         }
-
-        footer {
-            background: rgba(220, 235, 255, 0.4);
-            padding: 12px;
-            text-align: center;
-            font-size: 0.6rem;
-            color: #3a6288;
-        }
-
         .toast-copy {
             position: fixed;
             bottom: 80px;
             left: 50%;
-            transform: translateX(-50%) scale(0.9);
-            background: rgba(30, 45, 65, 0.85);
-            backdrop-filter: blur(20px);
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
             color: white;
             padding: 8px 20px;
             border-radius: 50px;
             font-size: 0.75rem;
-            z-index: 1500;
             opacity: 0;
-            transition: opacity 0.2s, transform 0.2s;
+            transition: opacity 0.2s;
             pointer-events: none;
-            white-space: nowrap;
-            border: 0.5px solid rgba(255,255,240,0.3);
-        }
-
-        .preview-panel:fullscreen {
-            background: rgba(15, 25, 40, 0.85);
-            backdrop-filter: blur(60px);
-            border-radius: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .preview-panel:fullscreen .toolbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(20, 35, 55, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            z-index: 1000;
-        }
-
-        .preview-panel:fullscreen .tool-btn {
-            background: rgba(255,255,255,0.15);
-            color: white;
-            border-color: rgba(255,255,255,0.3);
-        }
-
-        .preview-panel:fullscreen .counter-glass {
-            background: rgba(255,255,255,0.2);
-            color: white;
-        }
-
-        .preview-panel:fullscreen .progress-glass {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(20, 35, 55, 0.75);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .preview-panel:fullscreen .image-stage {
-            background: transparent;
-            padding: 100px 40px 80px;
-        }
-
-        .preview-panel:fullscreen .image-stage img {
-            max-height: 85vh;
-        }
-
-        .preview-panel:fullscreen .link-glass {
-            display: none;
+            z-index: 2000;
         }
     </style>
 </head>
@@ -466,17 +330,17 @@
             <p>沉浸式浏览 · 全屏 · 拖拽进度</p>
             <div class="stats-row">
                 <div class="total-badge">📸 图库总量 <span class="total-number">777</span></div>
-                <div class="status-light"><span class="pulse-dot"></span><span>已就绪 · 777张</span></div>
+                <div class="status-light">✨ 就绪</div>
             </div>
         </div>
 
         <div class="input-frost">
             <div class="input-flex">
                 <span class="input-label">🪄 序号</span>
-                <input type="text" id="seqInput" class="glass-input" placeholder="1,3,5 | 1-5 | all">
+                <input type="text" id="seqInput" class="glass-input" placeholder="示例: 1,3,5 或 1-5 或 all">
                 <button id="loadBtn" class="glass-button">✨ 载入光影</button>
             </div>
-            <div class="helper-text">支持格式:单个 / 逗号 / 范围 (1-5) / 混合 | all 加载全部</div>
+            <div class="helper-text">支持格式: 单个 / 逗号 / 范围 (1-5) / 混合 | all 加载全部</div>
         </div>
 
         <div class="viewer-glass">
@@ -512,13 +376,11 @@
             </div>
         </div>
 
-        <div class="privacy-note">
-            📢 声明:影像来自授权接口,仅用于沉浸体验,不涉及个人隐私/肖像侵权。
-        </div>
-        <footer>◉ 全屏沉浸 | 拖拽进度条快速跳转 | 点击链接一键复制</footer>
+        <div class="privacy-note">📢 声明:影像来自授权接口,仅用于沉浸体验,不涉及个人隐私/肖像侵权。</div>
+        <footer>◉ 真正全屏 | 拖拽进度条 | 点击链接一键复制</footer>
     </div>
 </div>
-<div id="copyToast" class="toast-copy">✅ 已复制到剪贴板</div>
+<div id="toast" class="toast-copy">✅ 已复制</div>
 
 <script>
     const IMAGES = [
@@ -1303,7 +1165,7 @@
 
     let currentList = [];
     let currentIndex = 0;
-    const totalImages = IMAGES.length;
+    let isFullscreen = false;
 
     const seqInput = document.getElementById('seqInput');
     const loadBtn = document.getElementById('loadBtn');
@@ -1318,16 +1180,13 @@
     const progressSlider = document.getElementById('progressSlider');
     const progressInfo = document.getElementById('progressInfo');
     const previewPanel = document.getElementById('previewPanel');
-    const toast = document.getElementById('copyToast');
+    const toast = document.getElementById('toast');
+    const body = document.body;
 
-    function showToastMessage(msg) {
+    function showToast(msg) {
         toast.innerText = msg;
         toast.style.opacity = '1';
-        toast.style.transform = 'translateX(-50%) scale(1)';
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateX(-50%) scale(0.9)';
-        }, 1500);
+        setTimeout(() => toast.style.opacity = '0', 1500);
     }
 
     function parseInput(input, total) {
@@ -1339,11 +1198,10 @@
         for (const part of parts) {
             if (!part.trim()) continue;
             if (part.includes('-')) {
-                const [start, end] = part.split('-');
-                const s = parseInt(start, 10);
-                const e = parseInt(end, 10);
-                if (!isNaN(s) && !isNaN(e)) {
-                    for (let i = Math.min(s, e); i <= Math.max(s, e); i++) {
+                const [s, e] = part.split('-');
+                const start = parseInt(s, 10), end = parseInt(e, 10);
+                if (!isNaN(start) && !isNaN(end)) {
+                    for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
                         if (i >= 1 && i <= total) numbers.add(i);
                     }
                 }
@@ -1352,7 +1210,7 @@
                 if (!isNaN(num) && num >= 1 && num <= total) numbers.add(num);
             }
         }
-        return Array.from(numbers).sort((a, b) => a - b);
+        return Array.from(numbers).sort((a,b)=>a-b);
     }
 
     function updateProgressBar() {
@@ -1363,7 +1221,7 @@
         progressArea.style.display = 'block';
         const percent = ((currentIndex + 1) / currentList.length) * 100;
         progressSlider.value = percent;
-        progressInfo.innerText = `${currentIndex + 1} / ${currentList.length}`;
+        progressInfo.innerText = `${currentIndex+1} / ${currentList.length}`;
     }
 
     function displayCurrentImage() {
@@ -1377,27 +1235,26 @@
         const item = currentList[currentIndex];
         const url = item.url;
         const seq = item.seq;
-        counterSpan.innerText = `${currentIndex + 1} / ${currentList.length} · 序号 ${seq}`;
+        counterSpan.innerText = `${currentIndex+1} / ${currentList.length} · 序号 ${seq}`;
         updateProgressBar();
-        imageArea.innerHTML = `<img src="${url}" alt="frame ${seq}" onerror="this.parentElement.innerHTML='<div class=\'placeholder-frost\'>⚠️ 无法加载此帧</div>'">`;
+        imageArea.innerHTML = `<img src="${url}" alt="${seq}" onerror="this.parentElement.innerHTML='<div class=\'placeholder-frost\'>⚠️ 加载失败</div>'">`;
         linkValueDiv.innerText = url;
-        const imgEl = imageArea.querySelector('img');
-        if (imgEl) imgEl.onclick = () => window.open(url, '_blank');
+        const img = imageArea.querySelector('img');
+        if (img) img.onclick = () => window.open(url, '_blank');
     }
 
     function loadSelected(seqNumbers) {
-        if (!seqNumbers.length) { alert("未检测到有效序号"); return false; }
+        if (!seqNumbers.length) { alert("未检测到有效序号"); return; }
         const list = [];
         for (let s of seqNumbers) {
             if (s >= 1 && s <= IMAGES.length) {
-                list.push({ seq: s, url: IMAGES[s - 1] });
+                list.push({ seq: s, url: IMAGES[s-1] });
             }
         }
-        if (!list.length) { alert("无有效图片"); return false; }
+        if (!list.length) { alert("无有效图片"); return; }
         currentList = list;
         currentIndex = 0;
         displayCurrentImage();
-        return true;
     }
 
     function prevFrame() {
@@ -1413,12 +1270,12 @@
 
     async function copyLink() {
         const link = linkValueDiv.innerText;
-        if (!link || link === '--') { showToastMessage("❌ 无链接"); return; }
+        if (!link || link === '--') { showToast("❌ 无链接"); return; }
         try {
             await navigator.clipboard.writeText(link);
-            showToastMessage("✅ 已复制");
+            showToast("✅ 已复制");
         } catch {
-            showToastMessage("❌ 复制失败");
+            showToast("❌ 复制失败");
         }
     }
 
@@ -1436,34 +1293,19 @@
     }
 
     function toggleFullscreen() {
-        if (!previewPanel) return;
-        if (!document.fullscreenElement) {
-            const requestMethod = previewPanel.requestFullscreen || previewPanel.webkitRequestFullscreen || previewPanel.msRequestFullscreen;
-            if (requestMethod) {
-                requestMethod.call(previewPanel).catch(err => {
-                    console.warn("全屏失败:", err);
-                    showToastMessage("全屏失败,请手动操作");
-                });
-                fullscreenBtn.innerText = '✕ 退出';
-            }
-        } else {
-            const exitMethod = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
-            if (exitMethod) {
-                exitMethod.call(document);
-                fullscreenBtn.innerText = '⛶ 全屏';
-            }
-        }
-    }
-
-    function onFullscreenChange() {
-        if (!document.fullscreenElement) {
-            fullscreenBtn.innerText = '⛶ 全屏';
-        } else {
+        if (!isFullscreen) {
+            body.classList.add('fullscreen-mode');
             fullscreenBtn.innerText = '✕ 退出';
+            isFullscreen = true;
+        } else {
+            body.classList.remove('fullscreen-mode');
+            fullscreenBtn.innerText = '⛶ 全屏';
+            isFullscreen = false;
         }
+        setTimeout(() => {
+            if (currentList.length) displayCurrentImage();
+        }, 10);
     }
-    document.addEventListener('fullscreenchange', onFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
 
     prevBtn.onclick = prevFrame;
     nextBtn.onclick = nextFrame;
@@ -1486,10 +1328,10 @@
         if (e.key === 'ArrowLeft') { e.preventDefault(); prevFrame(); }
         else if (e.key === 'ArrowRight') { e.preventDefault(); nextFrame(); }
         else if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen(); }
+        else if (e.key === 'Escape' && isFullscreen) { toggleFullscreen(); }
     });
 
-    // 移除自动加载代码,确保进入页面时没有任何图片被加载
-    // 进度条滑块默认已为0,且进度条区域因没有图片而隐藏
+    progressSlider.value = 0;
 </script>
 </body>
 </html>
